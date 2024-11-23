@@ -19,7 +19,7 @@ const ClientSideLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className={`flex min-h-screen bg-white text-black`}>
             <main className={`flex flex-col w-full h-full py-7 px-9 bg-white text-black`}>
-                <Header setUserLocation={setUserLocation} />
+                <Header setUserLocation={setUserLocation}  />
                 {children}
                 <Footer />
             </main>

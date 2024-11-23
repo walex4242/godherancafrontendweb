@@ -5,6 +5,7 @@ import ClientSideWrapper from '../app/ClientSideWrapper';
 import StoreProvider from '../app/redux'; // Your custom StoreProvider
 import { SearchProvider, useSearch } from '@/context/SearchContext';
 import { SupermarketProvider } from '@/context/SupermarketContext';
+import { LocationProvider } from '@/context/LocationContext';
 
 const RootComponent = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useAppDispatch();
@@ -24,13 +25,17 @@ const RootComponent = ({ children }: { children: React.ReactNode }) => {
 const RootComponentWithProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <StoreProvider>
+            
             <SearchProvider>
+                
                 <SupermarketProvider>
                     <ClientSideWrapper>
                         <RootComponent>{children}</RootComponent>
                     </ClientSideWrapper>
-                </SupermarketProvider>
-            </SearchProvider>
+                    </SupermarketProvider>
+                
+                </SearchProvider>
+            
         </StoreProvider>
     );
 };
