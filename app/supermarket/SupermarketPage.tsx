@@ -154,12 +154,12 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
                         {/* "All Items" Button */}
                         <button
                             onClick={handleAllButtonClick}
-                            className={`flex flex-col items-center p-2 mb-4 mx-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300 ease-in-out ${selectedCategory === 'all' ? 'bg-gray-400' : ''}`}
+                            className={`flex flex-col items-center p-2 mb-4 mx-2 rounded-lg bg-gray-100  transition duration-200 ease-in-out ${selectedCategory === 'all' ? 'bg-gray-200' : ''}`}
                         >
                             <div className="relative top-2 w-14 h-14 mb-4">
                                 <Image src="/all.svg" alt="All" width={40} height={40} />
                             </div>
-                            All Items
+                            TODOS
                         </button>
 
                         {/* Categories */}
