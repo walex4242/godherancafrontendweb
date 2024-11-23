@@ -129,22 +129,22 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
                 <h2 className='text-2xl font-bold mb-4'>Categories</h2>
                 <div className="relative">
                     {/* Left Navigation Button */}
-                    <button
+                    {/* <button
                         onClick={() => scrollCategories('left')}
                         className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:left-4 lg:bottom-2"
                         style={{ width: '40px', height: '40px' }}
                     >
                         &lt;
-                    </button>
+                    </button> */}
 
                     {/* Right Navigation Button */}
-                    <button
+                    {/* <button
                         onClick={() => scrollCategories('right')}
                         className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:right-4 lg:bottom-2"
                         style={{ width: '40px', height: '40px' }}
                     >
                         &gt;
-                    </button>
+                    </button> */}
 
                     {/* Categories Container */}
                     <div
