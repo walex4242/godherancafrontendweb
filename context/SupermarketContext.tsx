@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 // Create an instance of axios with a base URL
 const api = axios.create({
