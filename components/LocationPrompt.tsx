@@ -107,5 +107,4 @@ const LocationPrompt: React.FC<LocationPromptProps> = ({ onConfirm, onManual, on
         </div>
     );
 };
-
 export default LocationPrompt;

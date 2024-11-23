@@ -46,6 +46,10 @@ export interface Supermarket {
     address: string;
     categories?: Category[]; // Change this from number[] to Category[]
     items?: Item[]; // Change this from string[] to Item[]
+    coordinates?: {
+        lat: number;
+        lon: number;
+    }; 
 }
 
 interface SupermarketContextType {
