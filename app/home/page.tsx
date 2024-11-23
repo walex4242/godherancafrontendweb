@@ -1,23 +1,38 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from 'next/legacy/image';
+import Image from "next/legacy/image";
 import Link from "next/link";
 import { useSearch } from "@/context/SearchContext";
 import { useSupermarkets } from "@/context/SupermarketContext";
-import { Supermarket } from "@/context/SupermarketContext"; // Adjust the import path according to your project structure
+import { Supermarket } from "@/context/SupermarketContext";
 import { useRouter } from "next/navigation";
 
-interface HomeProps {
-    userLocation: { lat: number; lon: number } | null;
-    loading: boolean;
-}
+const Home: React.FC = () => {
+    const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
+    const [userLocationLoading, setUserLocationLoading] = useState(true);
 
-const Home: React.FC<HomeProps> = ({ userLocation, loading: userLocationLoading }) => {
     const { searchQuery } = useSearch();
     const { supermarkets, loading: supermarketsLoading, error } = useSupermarkets();
     const [selectedSupermarket, setSelectedSupermarket] = useState<Supermarket | null>(null);
 
     const router = useRouter();
+
+    useEffect(() => {
+        // Simulate fetching user location
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                setUserLocation({
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                });
+                setUserLocationLoading(false);
+            },
+            (err) => {
+                console.error("Error fetching location:", err);
+                setUserLocationLoading(false);
+            }
+        );
+    }, []);
 
     const filteredSupermarkets = supermarkets.filter((supermarket) =>
         supermarket.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -29,8 +44,8 @@ const Home: React.FC<HomeProps> = ({ userLocation, loading: userLocationLoading 
     };
 
     useEffect(() => {
-        console.log('User location:', userLocation);
-        console.log('Filtered supermarkets:', filteredSupermarkets);
+        console.log("User location:", userLocation);
+        console.log("Filtered supermarkets:", filteredSupermarkets);
     }, [userLocation, filteredSupermarkets]);
 
     if (userLocationLoading || supermarketsLoading) {
@@ -56,7 +71,7 @@ const Home: React.FC<HomeProps> = ({ userLocation, loading: userLocationLoading 
                             <Link href={`/supermarket/${supermarket._id}`} legacyBehavior>
                                 <a className="block w-full h-full">
                                     <Image
-                                        src={supermarket.image || '/fallback-image.jpg'}
+                                        src={supermarket.image || "/fallback-image.jpg"}
                                         alt={supermarket.name}
                                         width={400}
                                         height={200}
@@ -70,7 +85,6 @@ const Home: React.FC<HomeProps> = ({ userLocation, loading: userLocationLoading 
                                 </a>
                             </Link>
                         </div>
-
                     ))
                 ) : (
                     <p className="text-lg font-semibold col-span-full">Nenhum supermercado encontrado.</p>
