@@ -229,7 +229,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="mt-4">
                     <h3 className="text-lg font-bold">Resumo do Pedido</h3>
                     <p className="mt-2">Total de Itens: {totalQuantity}</p>
-                    <p>Peso Total: {totalWeight.toFixed(2)} kg</p>
+                    <p>Peso Total: {totalWeight.toFixed(2)}</p>
                     <p>Taxa de Entrega: R$ {deliveryFee.toFixed(2)}</p>
                     <p>Taxa de Separação: R$ {pickingFee.toFixed(2)}</p>
                     <p className="font-bold text-lg mt-2">Total: R$ {total}</p>
@@ -237,7 +237,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="mt-6 flex justify-between">
                     <button
                         onClick={onClose}
-                        className="p-2 w-full border rounded mr-2 bg-gray-300 hover:bg-gray-400"
+                        className="p-2 w-full border rounded mr-2 bg-gray-600 hover:bg-black text-white  "
                     >
                         Cancelar
                     </button>
