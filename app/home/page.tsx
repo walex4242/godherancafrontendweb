@@ -44,8 +44,6 @@ const Home: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log("User location:", userLocation);
-        console.log("Filtered supermarkets:", filteredSupermarkets);
     }, [userLocation, filteredSupermarkets]);
 
     if (userLocationLoading || supermarketsLoading) {

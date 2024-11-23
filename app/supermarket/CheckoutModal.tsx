@@ -160,70 +160,92 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     }
 
     return (
-        <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50'>
-            <div className='bg-white p-4 rounded w-full max-w-md overflow-y-auto' onScroll={handleScroll}>
-                <h2 className='text-xl font-bold mb-4'>Confira</h2>
-                <div className='mb-4'>
-                    <label className='block mb-2'>Nome</label>
+        <div
+            className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${isOpen ? 'visible opacity-100' : 'invisible opacity-0'
+                } transition-opacity duration-300`}
+        >
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                <h2 className="text-xl font-bold mb-4">Finalizar Compra</h2>
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-1">Nome do Cliente</label>
                     <input
-                        type='text'
+                        type="text"
                         value={customerName}
-                        onChange={(e) => onNameChange(e)}
-                        className='w-full p-2 border rounded'
+                        onChange={onNameChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Digite seu nome"
                     />
                 </div>
-                <div className='mb-4'>
-                    <label className='block mb-2'>Endereço</label>
-                    <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-1">Endereço</label>
+                    {isLoaded ? (
+                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+                            <input
+                                type="text"
+                                value={streetAddress}
+                                onChange={onAddressChange}
+                                className="w-full p-2 border rounded"
+                                placeholder="Digite seu endereço"
+                            />
+                        </Autocomplete>
+                    ) : (
                         <input
-                            type='text'
+                            type="text"
                             value={streetAddress}
-                            onChange={(e) => handleAddressChange(e.target.value)}
-                            className='w-full p-2 border rounded'
+                            onChange={onAddressChange}
+                            className="w-full p-2 border rounded"
+                            placeholder="Digite seu endereço"
                         />
-                    </Autocomplete>
+                    )}
                 </div>
-                <div className='mb-4'>
-                    <label className='block mb-2'>Observação</label>
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-1">Observações</label>
                     <textarea
                         value={note}
-                        onChange={(e) => onNoteChange(e)}
-                        className='w-full p-2 border rounded'
-                    ></textarea>
+                        onChange={onNoteChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Adicione observações ao pedido"
+                    />
                 </div>
-                <h2 className='text-xl font-bold mb-4'>Como você vai pagar?</h2>
-                <div className='flex mb-4'>
-                    <button
-                        onClick={() => onPaymentMethodChange('Pix')}
-                        className={`flex-1 py-2 rounded text-white ${paymentMethod === 'Pix' ? 'bg-black' : 'bg-gray-600'}`}
-                    >
-                        Pix
-                    </button>
-                    <button
-                        onClick={() => onPaymentMethodChange('credit-card')}
-                        className={`flex-1 py-2 rounded ml-2 text-white ${paymentMethod === 'credit-card' ? 'bg-black' : 'bg-gray-600'}`}
-                    >
-                        Cartão de crédito
-                    </button>
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-1">Método de Pagamento</label>
+                    <div className="flex space-x-4">
+                        <button
+                            onClick={() => onPaymentMethodChange('Pix')}
+                            className={`p-2 border rounded w-full ${paymentMethod === 'Pix' ? 'bg-gray-300' : 'bg-white'
+                                }`}
+                        >
+                            Pix
+                        </button>
+                        <button
+                            onClick={() => onPaymentMethodChange('credit-card')}
+                            className={`p-2 border rounded w-full ${paymentMethod === 'credit-card' ? 'bg-gray-300' : 'bg-white'
+                                }`}
+                        >
+                            Cartão de Crédito
+                        </button>
+                    </div>
                 </div>
-                <h2 className="text-2xl font-bold mb-4">Tarifas</h2>
-                <p className='text-xl font-semibold'>Supermercado: {supermarketName}</p>
-                <p className='text-xl font-semibold'>Total do carrinho: R${cartTotal.toFixed(2)}</p>
-                <p className='text-xl font-semibold'>Escolhendo Taxa: R${pickingFee.toFixed(2)}</p>
-                <p className='text-xl font-semibold'>Entrega Taxa: R${deliveryFee.toFixed(2)}</p>
-                <p className="mt-4 text-xl font-bold">Total Geral: R${total}</p>
-                <div className='flex mt-4'>
+                <div className="mt-4">
+                    <h3 className="text-lg font-bold">Resumo do Pedido</h3>
+                    <p className="mt-2">Total de Itens: {totalQuantity}</p>
+                    <p>Peso Total: {totalWeight.toFixed(2)} kg</p>
+                    <p>Taxa de Entrega: R$ {deliveryFee.toFixed(2)}</p>
+                    <p>Taxa de Separação: R$ {pickingFee.toFixed(2)}</p>
+                    <p className="font-bold text-lg mt-2">Total: R$ {total}</p>
+                </div>
+                <div className="mt-6 flex justify-between">
                     <button
                         onClick={onClose}
-                        className='flex-1 py-2 bg-black text-white rounded mr-2'
+                        className="p-2 w-full border rounded mr-2 bg-gray-300 hover:bg-gray-400"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleSendWhatsApp}
-                        className='flex-1 py-2 bg-green-500 text-white rounded'
+                        className="p-2 w-full border rounded bg-green-500 text-white hover:bg-green-600"
                     >
-                        Enviar WhatsApp
+                        Enviar pelo WhatsApp
                     </button>
                 </div>
             </div>
