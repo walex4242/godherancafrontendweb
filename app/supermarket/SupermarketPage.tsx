@@ -128,23 +128,6 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
 
                 <h2 className='text-2xl font-bold mb-4'>Categories</h2>
                 <div className="relative">
-                    {/* Left Navigation Button */}
-                    {/* <button
-                        onClick={() => scrollCategories('left')}
-                        className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:left-4 lg:bottom-2"
-                        style={{ width: '40px', height: '40px' }}
-                    >
-                        &lt;
-                    </button> */}
-
-                    {/* Right Navigation Button */}
-                    {/* <button
-                        onClick={() => scrollCategories('right')}
-                        className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:right-4 lg:bottom-2"
-                        style={{ width: '40px', height: '40px' }}
-                    >
-                        &gt;
-                    </button> */}
 
                     {/* Categories Container */}
                     <div
@@ -154,7 +137,7 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
                         {/* "All Items" Button */}
                         <button
                             onClick={handleAllButtonClick}
-                            className={`flex flex-col items-center p-2 mb-4 mx-2 rounded-lg bg-gray-100  transition duration-200 ease-in-out ${selectedCategory === 'all' ? 'bg-gray-200' : ''}`}
+                            className={`flex flex-col items-center p-2 mb-4 mx-2 rounded-lg bg-white  transition duration-200 ease-in-out ${selectedCategory === 'all' ? 'bg-gray-200' : ''}`}
                         >
                             <div className="relative top-2 w-14 h-14 mb-4">
                                 <Image src="/all.svg" alt="All" width={40} height={40} />
