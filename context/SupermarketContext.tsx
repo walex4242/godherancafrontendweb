@@ -69,18 +69,6 @@ export const SupermarketProvider: React.FC<{ children: ReactNode }> = ({ childre
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const testApi = async () => {
-            try {
-                const response = await axios.get('https://godherancabackend2-a7sse79m.b4a.run/supermarket');
-                console.log('API response:', response.data);
-            } catch (err) {
-                console.error('Error testing API:', (err as AxiosError).response?.data || (err as AxiosError).message);
-            }
-        };
-        testApi();
-    }, []);
-
     // Fetch supermarkets
     useEffect(() => {
         const fetchSupermarkets = async () => {
