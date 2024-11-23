@@ -127,32 +127,42 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
                 <p className='text-lg text-gray-600 mb-4'>{address}</p>
 
                 <h2 className='text-2xl font-bold mb-4'>Categories</h2>
-                <div className='relative'>
+                <div className="relative">
+                    {/* Left Navigation Button */}
                     <button
                         onClick={() => scrollCategories('left')}
-                        className='absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-lg z-20'
+                        className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:left-4 lg:bottom-2"
+                        style={{ width: '40px', height: '40px' }}
                     >
                         &lt;
                     </button>
+
+                    {/* Right Navigation Button */}
                     <button
                         onClick={() => scrollCategories('right')}
-                        className='absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-300 p-2 rounded-full shadow-lg z-20'
+                        className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-400 text-white p-2 rounded-full shadow-md hover:bg-gray-600 lg:top-auto lg:right-4 lg:bottom-2"
+                        style={{ width: '40px', height: '40px' }}
                     >
                         &gt;
                     </button>
+
+                    {/* Categories Container */}
                     <div
                         ref={categoriesContainerRef}
-                        className='flex overflow-x-auto scroll-snap-x whitespace-nowrap mb-4 px-2 gap-2 scrollbar-hide snap-mandatory'
+                        className="flex overflow-x-auto scroll-snap-x whitespace-nowrap mb-4 px-12 gap-4 scrollbar-hide snap-mandatory"
                     >
+                        {/* "All Items" Button */}
                         <button
                             onClick={handleAllButtonClick}
                             className={`flex flex-col items-center p-2 mb-4 mx-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition duration-300 ease-in-out ${selectedCategory === 'all' ? 'bg-gray-400' : ''}`}
                         >
-                            <div className='relative top-2 w-14 h-14 mb-4'>
+                            <div className="relative top-2 w-14 h-14 mb-4">
                                 <Image src="/all.svg" alt="All" width={40} height={40} />
                             </div>
                             All Items
                         </button>
+
+                        {/* Categories */}
                         {categories
                             .filter(category => !category.parentCategory)
                             .map(category => (
