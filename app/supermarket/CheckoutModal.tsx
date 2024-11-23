@@ -212,14 +212,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <div className="flex space-x-4">
                         <button
                             onClick={() => onPaymentMethodChange('Pix')}
-                            className={`p-2 border rounded w-full ${paymentMethod === 'Pix' ? 'bg-gray-300' : 'bg-white'
+                            className={`p-2 border rounded w-full ${paymentMethod === 'Pix' ? 'bg-black' : 'bg-gray-600'
                                 }`}
                         >
                             Pix
                         </button>
                         <button
                             onClick={() => onPaymentMethodChange('credit-card')}
-                            className={`p-2 border rounded w-full ${paymentMethod === 'credit-card' ? 'bg-gray-300' : 'bg-white'
+                            className={`p-2 border rounded w-full ${paymentMethod === 'credit-card' ? 'bg-black' : 'bg-gray-600'
                                 }`}
                         >
                             Cartão de Crédito
