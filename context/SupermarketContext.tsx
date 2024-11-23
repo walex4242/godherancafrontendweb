@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 
 // Create an instance of axios with a base URL
 const api = axios.create({
-    baseURL: 'https://godherancabackend2-a7sse79m.b4a.run'
+    baseURL: process.env.NEXT_PUBLIC_API_URL
 });
 
 // Interfaces matching your Mongoose models
