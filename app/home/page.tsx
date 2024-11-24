@@ -6,36 +6,18 @@ import { useSearch } from "@/context/SearchContext";
 import { useSupermarkets } from "@/context/SupermarketContext";
 import { Supermarket } from "@/context/SupermarketContext";
 import { useRouter } from "next/navigation";
+import { useLocation } from "@/context/LocationContext";  // Import LocationContext hook
 
 const Home: React.FC = () => {
-    const [userLocation, setUserLocation] = useState<{ lat: number; lon: number } | null>(null);
-    const [userLocationLoading, setUserLocationLoading] = useState(true);
+    const { userLocation, setUserLocation, loading: userLocationLoading } = useLocation();  // Use location context
     const [filteredSupermarkets, setFilteredSupermarkets] = useState<Supermarket[]>([]);
-
     const { searchQuery } = useSearch();
     const { supermarkets, loading: supermarketsLoading, error } = useSupermarkets();
     const router = useRouter();
 
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY || "";
 
-    // Fetch user location
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                setUserLocation({
-                    lat: position.coords.latitude,
-                    lon: position.coords.longitude,
-                });
-                setUserLocationLoading(false);
-            },
-            (err) => {
-                console.error("Error fetching location:", err);
-                setUserLocationLoading(false);
-            }
-        );
-    }, []);
-
-    // Helper: Calculate Haversine Distance
+    // Haversine distance calculation (to find proximity)
     const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const toRad = (value: number) => (value * Math.PI) / 180;
         const R = 6371; // Earth's radius in km
@@ -45,10 +27,10 @@ const Home: React.FC = () => {
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
+        return R * c; // Returns distance in kilometers
     };
 
-    // Geocode supermarket addresses and filter based on proximity
+    // Effect for geocoding supermarkets and filtering by proximity
     useEffect(() => {
         const geocodeAndFilterSupermarkets = async () => {
             if (!userLocation) return;
@@ -83,10 +65,9 @@ const Home: React.FC = () => {
                     supermarket.coordinates.lat,
                     supermarket.coordinates.lon
                 );
-                return distance <= 10; // Set desired proximity range (10 km)
+                return distance <= 10; // Set proximity to 10 km
             });
 
-            // Apply search query filter
             const finalFilteredSupermarkets = filteredByProximity.filter((supermarket) => {
                 const query = searchQuery.toLowerCase();
                 return (
@@ -99,8 +80,9 @@ const Home: React.FC = () => {
         };
 
         geocodeAndFilterSupermarkets();
-    }, [userLocation, supermarkets, searchQuery]);
+    }, [userLocation, supermarkets, searchQuery]); // Rerun when userLocation or supermarkets change
 
+    // Handle clicking a supermarket
     const handleSupermarketClick = (supermarket: Supermarket) => {
         router.push(`/supermarket/${supermarket._id}`);
     };
@@ -116,7 +98,6 @@ const Home: React.FC = () => {
     return (
         <main className="flex flex-col items-start bg-white p-4 w-full max-w-screen-lg mx-auto">
             <h1 className="text-2xl font-bold mb-6">Supermercados Atacadistas</h1>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
                 {filteredSupermarkets.length > 0 ? (
                     filteredSupermarkets.map((supermarket) => (

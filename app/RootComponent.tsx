@@ -25,17 +25,15 @@ const RootComponent = ({ children }: { children: React.ReactNode }) => {
 const RootComponentWithProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <StoreProvider>
-            
-            <SearchProvider>
-                
-                <SupermarketProvider>
+            <LocationProvider>
+                <SearchProvider>
+                    <SupermarketProvider>
                     <ClientSideWrapper>
                         <RootComponent>{children}</RootComponent>
                     </ClientSideWrapper>
                     </SupermarketProvider>
-                
                 </SearchProvider>
-            
+            </LocationProvider>
         </StoreProvider>
     );
 };
