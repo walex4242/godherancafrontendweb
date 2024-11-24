@@ -8,7 +8,7 @@ const ClientWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
     return (
         <SearchProvider>
-            <Header setUserLocation={setUserLocation} />
+            <Header />
             {React.cloneElement(children as React.ReactElement<any>, { userLocation })}
         </SearchProvider>
     );
