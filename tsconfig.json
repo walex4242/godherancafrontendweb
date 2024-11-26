@@ -12,6 +12,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
     "jsx": "preserve",
     "incremental": true,
     "plugins": [
@@ -22,8 +23,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["mapbox-gl", "@mapbox/mapbox-gl-geocoder"],
-    "typeRoots": ["node_modules/@types"]
+    "types": ["mapbox-gl", "@mapbox/mapbox-gl-geocoder"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

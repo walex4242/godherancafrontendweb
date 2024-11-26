@@ -2,8 +2,9 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { Autocomplete } from '@react-google-maps/api';
 import { Item } from '../../context/SupermarketContext';
 import useGoogleMapsLoader from '../../hook/GoogleMap'; // Adjust the path as needed
-
-type CartItem = Item & { quantity: number };
+import mapboxSdk from '@mapbox/mapbox-sdk';
+import geocodingService from '@mapbox/mapbox-sdk/services/geocoding';
+import directionsService from '@mapbox/mapbox-sdk/services/directions';
 
 interface CheckoutModalProps {
     isOpen: boolean;
@@ -21,7 +22,19 @@ interface CheckoutModalProps {
     supermarketName: string;
 }
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY || ''; // Replace with your actual Google Maps API key
+interface MapboxFeature {
+    place_name: string; // The name of the place (what you want to display)
+    geometry: {
+        coordinates: [number, number]; // [longitude, latitude]
+    };
+}
+
+interface Coordinates {
+    latitude: number;
+    longitude: number;
+}
+
+const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY || '';
 
 const CheckoutModal: React.FC<CheckoutModalProps> = ({
     isOpen,
@@ -38,54 +51,120 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
     supermarketAddress,
     supermarketName
 }) => {
-    const isLoaded = useGoogleMapsLoader(apiKey);
-    const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
     const [distance, setDistance] = useState<number | null>(null);
+    const geocodingClient = geocodingService({ accessToken: mapboxAccessToken });
+    const directionsClient = directionsService({ accessToken: mapboxAccessToken });
+    const [autocompleteResults, setAutocompleteResults] = useState<string[]>([]);
+    const [selectedAddress, setSelectedAddress] = useState<string>(streetAddress);
+    const [debouncedQuery, setDebouncedQuery] = useState<string>('');
+    const [isTyping, setIsTyping] = useState<boolean>(false);
+    const [isAddressSelected, setIsAddressSelected] = useState<boolean>(false); 
 
-    const onLoad = useCallback((autoC: google.maps.places.Autocomplete) => {
-        setAutocomplete(autoC);
-    }, []);
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setDebouncedQuery(selectedAddress);
+        }, 500);
 
-    const handleAddressChange = (address: string) => {
-        const event = {
-            target: { value: address }
-        } as React.ChangeEvent<HTMLInputElement>;
-        onAddressChange(event);
-    };
+        return () => clearTimeout(timeout);
+    }, [selectedAddress]);
 
-    const onPlaceChanged = useCallback(() => {
-        if (autocomplete) {
-            const place = autocomplete.getPlace();
-            if (place.formatted_address) {
-                handleAddressChange(place.formatted_address);
-                calculateDistance(place.formatted_address);
-            }
+    useEffect(() => {
+        if (debouncedQuery && isTyping) {
+            geocodeAddress(debouncedQuery);
+        } else {
+            setAutocompleteResults([]);
         }
-    }, [autocomplete]);
+        setIsTyping(false);
+    }, [debouncedQuery]);
 
-    const calculateDistance = (address: string) => {
-        if (!supermarketAddress || !address) return;
-
-        const service = new google.maps.DistanceMatrixService();
-
-        service.getDistanceMatrix(
-            {
-                origins: [supermarketAddress],
-                destinations: [address],
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-                if (status === 'OK' && response?.rows[0]?.elements[0]?.distance) {
-                    const distanceInMeters = response.rows[0].elements[0].distance.value;
-                    const distanceInKilometers = distanceInMeters / 1000;
-                    setDistance(distanceInKilometers);
-                } else {
-                    console.error('Error calculating distance:', status);
-                    setDistance(null);
-                }
-            }
-        );
+    const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setSelectedAddress(query);
+        if (!query) {
+            setAutocompleteResults([]);
+        } else {
+            setIsTyping(true);
+        }
     };
+
+    const handleAddressSelect = (address: string) => {
+        setSelectedAddress(address);
+        setIsAddressSelected(true);  // Set to true when an address is selected
+        onAddressChange({
+            target: { value: address },
+        } as React.ChangeEvent<HTMLInputElement>);
+        setAutocompleteResults([]);
+        calculateDistance(address);
+    };
+
+
+
+    const geocodeAddress = async (query: string): Promise<Coordinates | null> => {
+        try {
+            const response = await geocodingClient
+                .forwardGeocode({
+                    query,
+                    limit: 5, // Increase the limit to show multiple results
+                })
+                .send();
+
+            console.log('Geocode response:', response.body); // Log the full response to debug
+
+            const features = response.body.features as MapboxFeature[];
+
+            if (features.length > 0) {
+                const addresses = features.map(feature => feature.place_name); // Extract address names
+                setAutocompleteResults(addresses); // Set the autocomplete results
+                return { longitude: features[0].geometry.coordinates[0], latitude: features[0].geometry.coordinates[1] };
+            } else {
+                setAutocompleteResults([]); // Clear results if no features found
+                return null;
+            }
+        } catch (error) {
+            console.error('Error in geocoding address:', error);
+            return null;
+        }
+    };
+
+    const calculateDistance = async (address: string) => {
+        if (!supermarketAddress || !address) {
+            console.warn('Supermarket address or customer address is missing.');
+            return;
+        }
+
+        try {
+            // Get coordinates for the supermarket and customer address
+            const originCoords = await geocodeAddress(supermarketAddress);
+            const destinationCoords = await geocodeAddress(address);
+
+            if (!originCoords || !destinationCoords) {
+                console.warn('Failed to get coordinates for one or both addresses.');
+                return;
+            }
+
+            const response = await directionsClient
+                .getDirections({
+                    profile: 'driving',
+                    waypoints: [
+                        { coordinates: [originCoords.longitude, originCoords.latitude] },
+                        { coordinates: [destinationCoords.longitude, destinationCoords.latitude] },
+                    ],
+                })
+                .send();
+
+            if (response.body.routes.length > 0) {
+                const distanceInMeters = response.body.routes[0].distance;
+                const distanceInKilometers = distanceInMeters / 1000;
+                setDistance(distanceInKilometers);
+            } else {
+                setDistance(null);
+            }
+        } catch (error) {
+            console.error('Error calculating distance:', error);
+            setDistance(null);
+        }
+    };
+
 
     const cartTotal = cart.reduce((total, item) => {
         const itemPrice = item.discount ? item.price * (1 - item.discount / 100) : item.price;
@@ -122,8 +201,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         deliveryRatePerKilometer = 4;
     }
 
-    const deliveryFee = distance ? distance * deliveryRatePerKilometer : 0;
+    const MAX_DELIVERY_FEE = 100; // Example cap
+    const deliveryFee = distance ? Math.min(distance * deliveryRatePerKilometer, MAX_DELIVERY_FEE) : 0;
     const total = (cartTotal + pickingFee + deliveryFee).toFixed(2);
+
+
+    console.log('Delivery rate per kilometer:', deliveryRatePerKilometer);
 
     const handleSendWhatsApp = () => {
         const cartItemsMessage = cart.map(item => {
@@ -137,27 +220,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
         window.open(url, '_blank');
     };
 
-    useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [isOpen]);
-
-    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-    };
-
     if (!isOpen) return null;
-
-    if (!isLoaded) {
-        return <div>Loading Google Maps...</div>;
-    }
 
     return (
         <div
@@ -178,24 +241,25 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
                 <div className="mb-4">
                     <label className="block text-sm font-bold mb-1">Endereço</label>
-                    {isLoaded ? (
-                        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                            <input
-                                type="text"
-                                value={streetAddress}
-                                onChange={onAddressChange}
-                                className="w-full p-2 border rounded"
-                                placeholder="Digite seu endereço"
-                            />
-                        </Autocomplete>
-                    ) : (
-                        <input
-                            type="text"
-                            value={streetAddress}
-                            onChange={onAddressChange}
-                            className="w-full p-2 border rounded"
-                            placeholder="Digite seu endereço"
-                        />
+                    <input
+                        type="text"
+                        value={selectedAddress}
+                        onChange={handleAddressChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Digite seu endereço"
+                    />
+                    {autocompleteResults.length > 0 && !isAddressSelected && (  // Prevent fade-out if address is selected
+                        <ul className="border rounded max-h-48 overflow-y-auto mt-2">
+                            {autocompleteResults.map((address, index) => (
+                                <li
+                                    key={index}
+                                    onClick={() => handleAddressSelect(address)}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                >
+                                    {address}
+                                </li>
+                            ))}
+                        </ul>
                     )}
                 </div>
                 <div className="mb-4">

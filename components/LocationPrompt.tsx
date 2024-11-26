@@ -12,7 +12,16 @@ const LocationPrompt: React.FC<LocationPromptProps> = ({ onConfirm, onManual, on
     const [showManualInput, setShowManualInput] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+    const [debouncedAddress, setDebouncedAddress] = useState('');
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY || '';
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setManualAddress(debouncedAddress);
+        }, 500); // Adjust the delay as needed
+
+        return () => clearTimeout(timer);
+    }, [debouncedAddress]);
 
     useEffect(() => {
         if (manualAddress) {
@@ -107,4 +116,5 @@ const LocationPrompt: React.FC<LocationPromptProps> = ({ onConfirm, onManual, on
         </div>
     );
 };
+
 export default LocationPrompt;

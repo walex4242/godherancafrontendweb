@@ -9,11 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mapbox/mapbox-gl-geocoder": "^5.0.2",
+    "@mapbox/mapbox-sdk": "^0.16.1",
     "@react-google-maps/api": "^2.19.3",
     "@reduxjs/toolkit": "^2.2.7",
     "@types/google.maps": "^3.55.12",
-    "@types/mapbox-gl": "^3.4.0",
     "axios": "^1.7.4",
     "git-filter-repo": "^0.0.30",
     "mapbox-gl": "^3.6.0",
@@ -26,7 +25,10 @@
     "tw-colors": "^3.3.1"
   },
   "devDependencies": {
+    "@mapbox/mapbox-gl-geocoder": "^5.0.3",
     "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
+    "@types/mapbox__mapbox-sdk": "^0.16.0",
+    "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^20.14.14",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",

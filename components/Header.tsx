@@ -24,16 +24,18 @@ const Header: React.FC = () => {
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY || "";
 
     useEffect(() => {
-        const promptShown = localStorage.getItem("promptShown");
-        if (!promptShown && !userLocation) {
+        // Only show prompt if there's no location set
+        if (!userLocation) {
             setShowPrompt(true);
         }
 
+        // Load the stored address only if it's available in localStorage and not yet set
         const storedAddress = localStorage.getItem("userAddress");
-        if (storedAddress) {
+        if (storedAddress && !userAddress) {
             setUserAddress(storedAddress);
         }
-    }, [userLocation, setUserAddress]);
+
+    }, [userLocation, userAddress, setUserAddress]);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
@@ -41,6 +43,7 @@ const Header: React.FC = () => {
 
     const getLocation = () => {
         if (navigator.geolocation) {
+            setLoading(true);
             navigator.geolocation.getCurrentPosition(
                 showPosition,
                 handleError,
@@ -53,9 +56,8 @@ const Header: React.FC = () => {
 
     const showPosition = (position: GeolocationPosition) => {
         const { latitude, longitude } = position.coords;
-
         setUserLocation({ lat: latitude, lon: longitude });
-        reverseGeocodeAddress(latitude, longitude);
+        reverseGeocodeAddress(latitude, longitude); // Get the address from coordinates
         setLoading(false);
         localStorage.setItem("promptShown", "true"); // Mark prompt as shown
     };
@@ -66,16 +68,10 @@ const Header: React.FC = () => {
         setLoading(false);
     };
 
-    const manualLocation = (manualAddress: string) => {
-        geocodeAddress(manualAddress);
-    };
-
     const geocodeAddress = (address: string) => {
         setLoading(true);
         fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-                address
-            )}.json?access_token=${mapboxToken}`
+            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${mapboxToken}`
         )
             .then((response) => response.json())
             .then((data) => {
@@ -120,12 +116,13 @@ const Header: React.FC = () => {
     const handleConfirmLocation = () => {
         setShowPrompt(false);
         setLoading(true);
-        getLocation();
+        getLocation();  // Trigger geolocation request after user confirmation
     };
 
     const handleManualLocation = (address: string) => {
         setShowPrompt(false);
-        manualLocation(address);
+        geocodeAddress(address);
+        localStorage.removeItem('userAddress'); // Optionally clear old address
     };
 
     return (
@@ -197,7 +194,6 @@ const Header: React.FC = () => {
                             }
                         }}
                     />
-
                 )}
                 {loading && (
                     <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-50 bg-opacity-75 flex items-center justify-center">
