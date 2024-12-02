@@ -6,6 +6,7 @@ import Image from "next/legacy/image";
 import dynamic from "next/dynamic";
 import { useSearch } from "@/context/SearchContext";
 import { useLocation } from "@/context/LocationContext";
+import Link from "next/link";
 
 const LocationPrompt = dynamic(() => import("./LocationPrompt"), { ssr: false });
 
@@ -22,6 +23,7 @@ const Header: React.FC = () => {
 
     const [showPrompt, setShowPrompt] = useState(false);
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY || "";
+    const [inactivityTimeout, setInactivityTimeout] = useState<number | null>(null);
 
     useEffect(() => {
         // Only show prompt if there's no location set
@@ -140,11 +142,11 @@ const Header: React.FC = () => {
             />
             <nav className="bg-white p-4">
                 <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto">
-                    <a href="/">
+                    <Link href="/home">
                         <div className="flex items-start flex-shrink-0">
                             <Image src="/logo.svg" alt="Logo" width={80} height={80} />
                         </div>
-                    </a>
+                    </Link>
                     <div className="flex flex-col md:flex-row items-center flex-1 mx-8 mt-4 md:mt-0 text-black">
                         <div className="flex items-center space-x-2 flex-shrink-0">
                             {userAddress && (
@@ -173,12 +175,12 @@ const Header: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex items-center flex-shrink-0 mt-4 md:mt-0">
-                        <a
+                        <Link
                             href="/about"
                             className="text-white px-4 py-2 rounded-lg bg-gradient-to-r from-gray-300 to-gray-700 hover:from-gray-500 hover:to-gray-900 transition-all duration-300 ease-in-out font-semibold shadow-md"
                         >
                             Sobre Nós
-                        </a>
+                        </Link>
                     </div>
                 </div>
 

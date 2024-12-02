@@ -6,6 +6,7 @@ import ItemModal from '../../components/ItemModal';
 import CheckoutModal from './CheckoutModal';
 import CartItem from '../../components/CartItem';
 import { Category, Item } from '@/context/SupermarketContext';
+
 interface SupermarketPageProps {
     name: string;
     image: string;
@@ -33,6 +34,7 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
     const [paymentMethod, setPaymentMethod] = React.useState<'Pix' | 'credit-card' | null>(null);
 
     const categoriesContainerRef = useRef<HTMLDivElement>(null);
+   
 
     const filterItemsByCategoryAndSearch = () => {
         let filteredItems = items;
@@ -99,19 +101,21 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
         setSelectedCategory('all');
     };
 
-    const scrollCategories = (direction: 'left' | 'right') => {
-        if (categoriesContainerRef.current) {
-            const scrollAmount = 200; // Adjust this value as needed
-            categoriesContainerRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
-        }
+    const handleBackButtonClick = () => {
+        window.history.back(); // Go back to the previous page in browser history
     };
 
     return (
-        <div className='flex flex-col lg:flex-row bg-white'>
-            <div className='w-full lg:w-3/4 p-4'>
+         
+        <div className='relative flex flex-col lg:flex-row bg-white'>
+            <button
+                onClick={handleBackButtonClick}
+                className='absolute top-4 left-4 p-2 mb-5 bg-gray-500 text-white rounded-lg hover:bg-black transition duration-200 z-10 '
+            >
+                &#8592; Back to Supermarket
+            </button>
+
+            <div className='w-full lg:w-3/4 p-4 mt-12 '>
                 <div className='relative w-full h-60 mb-4'>
                     <Image
                         src={image}

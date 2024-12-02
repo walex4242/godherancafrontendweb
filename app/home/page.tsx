@@ -65,7 +65,7 @@ const Home: React.FC = () => {
                     supermarket.coordinates.lat,
                     supermarket.coordinates.lon
                 );
-                return distance <= 10; // Set proximity to 10 km
+                return distance <= 20; // Set proximity to 10 km
             });
 
             const finalFilteredSupermarkets = filteredByProximity.filter((supermarket) => {
