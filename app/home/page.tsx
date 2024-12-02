@@ -95,12 +95,6 @@ const Home: React.FC = () => {
         return <div className="flex justify-center items-center h-screen"><p>Loading...</p></div>;
     }
 
-    useEffect(() => {
-        if (error && error.includes("Failed to fetch categories or items")) {
-            router.push("/");  // Navigate to the home page
-        }
-    }, [error, router]);
-
 
     return (
         <main className="flex flex-col items-start bg-white p-4 w-full max-w-screen-lg mx-auto">
