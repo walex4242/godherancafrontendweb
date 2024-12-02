@@ -87,13 +87,20 @@ const Home: React.FC = () => {
         router.push(`/supermarket/${supermarket._id}`);
     };
 
+    const handleBackButtonClick = () => {
+        window.history.back(); // Go back to the previous page in browser history
+    };
+
     if (userLocationLoading || supermarketsLoading) {
         return <div className="flex justify-center items-center h-screen"><p>Loading...</p></div>;
     }
 
-    if (error) {
-        return <div className="flex justify-center items-center h-screen"><p>Error loading supermarkets: {error}</p></div>;
-    }
+    useEffect(() => {
+        if (error && error.includes("Failed to fetch categories or items")) {
+            console.log("Redirecting to homepage...");
+            router.push("/");  // Navigate to the home page
+        }
+    }, [error, router]);
 
     return (
         <main className="flex flex-col items-start bg-white p-4 w-full max-w-screen-lg mx-auto">
