@@ -110,9 +110,9 @@ const SupermarketPage: React.FC<SupermarketPageProps> = ({
         <div className='relative flex flex-col lg:flex-row bg-white'>
             <button
                 onClick={handleBackButtonClick}
-                className='absolute left-4 p-2 mb-5 bg-gray-500 rounded-md hover:bg-black transition duration-200 z-10 '
+                className='absolute left-4 p-2 mb-5 bg-white rounded-md hover:bg-gray-100 transition duration-200'
             >
-                <Image src="/back.svg" width={40} height={20} alt='back' className='filter brightness-0 invert transition duration-200' />
+                <Image src="/back.svg" width={40} height={30} alt='back' />
             </button>
 
             <div className='w-full lg:w-3/4 p-4 mt-12 '>
