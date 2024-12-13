@@ -51,7 +51,7 @@ We welcome contributions to the project! If you'd like to contribute, follow the
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
 # Acknowledgments
-Name: Olawale Olafisoye
+Name: Olawale Olafisoye || 
 Contact: walex.world20@gmail.com
 ________________________________________
 
